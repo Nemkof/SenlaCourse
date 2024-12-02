@@ -1,27 +1,38 @@
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class Book {
     private final String name;
     private final String author;
-    private BookStatus status;
+    private final Integer publicationDate;
+    private LocalDate lastDeliveredDate;
+    private final Integer price;
+    private BookStatus status = BookStatus.NotAvailable;
     private Integer amount;
 
-    public Book(String name, String author, Integer amount) {
+    // Конструктор для создания книги, которая лежит в магазине
+    public Book(String name, String author, Integer amount, Integer price,
+                Integer publicationDate, LocalDate lastDeliveredDate) {
         this.name = name;
         this.author = author;
         this.amount = amount;
+        this.price = price;
+        this.publicationDate = publicationDate;
+        this.lastDeliveredDate = lastDeliveredDate;
 
         if(this.amount > 0){
             this.status = BookStatus.Available;
         } else{
             this.amount = 0;
-            this.status = BookStatus.NotAvailable;
         }
     }
 
-    public Book(String name, String author) {
+    // Конструктор для книги, по которой создают заказ
+    public Book(String name, String author, Integer price, Integer publicationDate) {
         this.name = name;
         this.author = author;
+        this.price = price;
+        this.publicationDate = publicationDate;
     }
 
     public String getName() {
@@ -36,13 +47,13 @@ public class Book {
         return status;
     }
 
-    public void setStatus(BookStatus status) {
-        this.status = status;
+    public LocalDate getLastDeliveredDate() {
+        return lastDeliveredDate;
     }
 
-    void setAmount(Integer amount){
+    public void setAmount(Integer amount){
         this.amount += amount;
-        if(amount > 0){
+        if(this.amount > 0){
             status = BookStatus.Available;
         }
         else{
@@ -51,8 +62,18 @@ public class Book {
         }
     }
 
-    Integer getAmount(){
-        return amount;
+    public Integer getPrice(){
+        return price;
+    }
+
+    public Integer getPublicationDate(){
+        return publicationDate;
+    }
+
+    public String getInfoAbout(){
+        return name + ",  " + author + ",  " + publicationDate
+                + ",  " + price + ",  " + amount + ",  " + status.toString()
+                + ",  " + (lastDeliveredDate == null ? "null" : lastDeliveredDate.toString());
     }
 
     @Override
@@ -60,6 +81,13 @@ public class Book {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
-        return Objects.equals(name, book.name) && Objects.equals(author, book.author);
+        return Objects.equals(name, book.name) && Objects.equals(author, book.author)
+                && Objects.equals(publicationDate, book.publicationDate)
+                && Objects.equals(price, book.price);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, author, publicationDate, price);
     }
 }
